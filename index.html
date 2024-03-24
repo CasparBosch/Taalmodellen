@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -17,5 +17,77 @@
 
 <script src="languageModel.js"></script>
 <script src="app.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-gram Model</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            class NGramModel {
+                constructor(n) {
+                    this.n = n;
+                    this.ngrams = {};
+                }
+
+                train(text) {
+                    const words = text.split(/\s+/);
+                    for (let i = 0; i < words.length - this.n; i++) {
+                        const history = words.slice(i, i + this.n - 1).join(' ');
+                        const nextWord = words[i + this.n - 1];
+                        if (!this.ngrams[history]) {
+                            this.ngrams[history] = [];
+                        }
+                        this.ngrams[history].push(nextWord);
+                    }
+                }
+
+                predictNext(history) {
+                    const possibleNextWords = this.ngrams[history];
+                    if (possibleNextWords) {
+                        return possibleNextWords[Math.floor(Math.random() * possibleNextWords.length)];
+                    } else {
+                        return null;
+                    }
+                }
+            }
+
+            function main() {
+                const model = new NGramModel(3); // Using trigrams
+                document.getElementById('trainBtn').addEventListener('click', function() {
+                    const trainingText = document.getElementById('trainingText').value;
+                    model.train(trainingText);
+                    alert("Model trained successfully!");
+                });
+
+                document.getElementById('predictBtn').addEventListener('click', function() {
+                    const history = document.getElementById('history').value;
+                    const nextWord = model.predictNext(history);
+                    document.getElementById('output').innerText = "Next word prediction: " + nextWord;
+                });
+            }
+
+            main();
+        });
+    </script>
+</head>
+<body>
+    <h1>N-gram Model Prediction</h1>
+    <div>
+        <label for="trainingText">Enter text for training:</label><br>
+        <textarea id="trainingText" rows="4" cols="50"></textarea><br>
+        <button id="trainBtn">Train Model</button>
+    </div>
+    <hr>
+    <div>
+        <label for="history">Enter history (last n-1 words):</label><br>
+        <input type="text" id="history"><br>
+        <button id="predictBtn">Predict Next Word</button>
+    </div>
+    <div id="output"></div>
 </body>
 </html>
